@@ -13,7 +13,7 @@
   };
   var APP_NAME = "Zevio";
   // New accounts use a real email address so Firebase password recovery works.
-  // USER_DOMAIN is kept only for legacy accounts created by older Aero builds.
+  // USER_DOMAIN is kept only for legacy accounts created by older Zevio builds.
   var USER_DOMAIN = "jarvisid.app";
   var PHONE_DOMAIN = "jarvisphone.app";
   // ==========================================
@@ -123,8 +123,8 @@
   function applyTheme(t){
     if (LEGACY_THEMES[t]) t = LEGACY_THEMES[t];
     if (!THEME_NAMES[t]) t = "lilac";
-    safeSet("aero_chat_theme", t);
-    safeSet("aero_theme", t); // legacy key retained for upgrades; no longer controls the whole app.
+    safeSet("Zevio_chat_theme", t);
+    safeSet("Zevio_theme", t); // legacy key retained for upgrades; no longer controls the whole app.
     var msgs = document.getElementById("msgsEl");
     if (!msgs) return;
     msgs.setAttribute("data-chat-theme", t);
@@ -142,13 +142,13 @@
     });
     document.body.removeChild(probe);
   }
-  function currentTheme(){ return safeGet("aero_chat_theme") || safeGet("aero_theme") || "lilac"; }
+  function currentTheme(){ return safeGet("Zevio_chat_theme") || safeGet("Zevio_theme") || "lilac"; }
   // mode: "auto" follows the OS, "light" / "dark" force it
   function applyMode(m){
     if (m !== "light" && m !== "dark") m = "auto";
     if (m === "auto") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", m);
-    safeSet("aero_mode", m);
+    safeSet("Zevio_mode", m);
   }
   function themeCards(list, current){
     return list.map(function(t){
@@ -157,7 +157,7 @@
         '<div class="theme-name">'+esc(t.name)+'</div></button>';
     }).join("");
   }
-  applyMode(safeGet("aero_mode") || "auto");
+  applyMode(safeGet("Zevio_mode") || "auto");
   function chatIdFor(a,b){ return [a,b].sort().join("__"); }
   // { [uid]: value } - used to build REAL nested objects for Firestore set(..., {merge:true}).
   // (Dotted keys like "unread.uid" only work in update(); in set() they become literal field names.)
@@ -330,7 +330,7 @@
               '<div class="hero-copy">A fast, focused place to talk by username — with real-time messaging, privacy controls and a clean experience that stays out of your way.</div>' +
               '<div class="hero-pills"><span class="hero-pill">Real-time chat</span><span class="hero-pill">Message requests</span><span class="hero-pill">Read receipts</span><span class="hero-pill">Private profiles</span></div>' +
             '</div>' +
-            '<div class="hero-footer">Aero • Secure sign-in powered by Firebase Authentication</div>' +
+            '<div class="hero-footer">Zevio • Secure sign-in powered by Firebase Authentication</div>' +
           '</section>' +
           '<section class="auth-side"><div class="auth-card">' +
             '<div class="auth-eyebrow">Welcome to Zevio</div>' +
@@ -348,7 +348,7 @@
             '<div class="error-text" id="authError"></div>' +
             '<button class="btn primary" id="authGo" style="width:100%">'+(mode==="signup"?"Create account":"Sign in")+'</button>' +
             (mode==="login" ? '<a class="forgot-link" id="forgotLink">Forgot your password?</a>' : '') +
-            '<div class="switch-line"><span>'+ (mode==="signup"?"Already have an account?":"New to Aero?") +'</span> <a id="authSwitch">'+(mode==="signup"?"Sign in":"Create account")+'</a></div>' +
+            '<div class="switch-line"><span>'+ (mode==="signup"?"Already have an account?":"New to Zevio?") +'</span> <a id="authSwitch">'+(mode==="signup"?"Sign in":"Create account")+'</a></div>' +
             '<div class="auth-security"><span class="security-dot"></span> Your password is handled by Firebase Authentication</div>' +
           '</div></section>' +
         '</div></div>';
@@ -389,7 +389,7 @@
       ov.innerHTML='<div class="reset-modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">' +
         '<div class="reset-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/><circle cx="12" cy="16" r="1"/></svg></div>' +
         '<h2 id="resetTitle">Reset your password</h2>' +
-        '<p>Verify your Aero account first. You can check an email address or a username before requesting a reset.</p>' +
+        '<p>Verify your Zevio account first. You can check an email address or a username before requesting a reset.</p>' +
         '<div class="reset-mode" style="display:flex;gap:6px;padding:4px;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;margin-bottom:14px">' +
           '<button type="button" class="btn" id="resetEmailMode" style="flex:1;background:var(--card);color:var(--text-main);padding:9px 10px">Email</button>' +
           '<button type="button" class="btn" id="resetUserMode" style="flex:1;background:transparent;color:var(--muted);padding:9px 10px">Username</button>' +
@@ -874,13 +874,13 @@
       getProfile(otherUid).then(function(p){
         var text = c.lastMessage || "New message";
         showToast(p, text, function(){ openChat(otherUid); });
-        if (boolPref("aero_notif_desktop", false) && window.Notification && Notification.permission==="granted") {
+        if (boolPref("Zevio_notif_desktop", false) && window.Notification && Notification.permission==="granted") {
           try {
             var n = new Notification(displayName(p), { body: text });
             n.onclick = function(){ window.focus(); openChat(otherUid); n.close(); };
           } catch(e){}
         }
-        if (boolPref("aero_notif_sound", true)) playPing();
+        if (boolPref("Zevio_notif_sound", true)) playPing();
       });
     }
     function updateTitleBadge(){
@@ -1337,7 +1337,7 @@
     // ---- settings ----
     function openSettings(){
       var theme = currentTheme();
-      var mode = safeGet("aero_mode") || "auto";
+      var mode = safeGet("Zevio_mode") || "auto";
       var old = document.getElementById("settingsOverlay"); if (old) old.remove();
       var ov = document.createElement("div");
       ov.id = "settingsOverlay"; ov.className = "settings-overlay";
@@ -1377,9 +1377,9 @@
 
           '<div class="settings-section"><h3>Notifications</h3>' +
             '<div class="toggle-row"><div class="toggle-copy"><div class="toggle-title">Desktop notifications</div><div class="toggle-desc">Get a system notification for new messages.</div></div>' +
-              '<label class="switch"><input type="checkbox" id="tDesktop" '+(boolPref("aero_notif_desktop",false)?"checked":"")+'><span class="switch-track"></span></label></div>' +
+              '<label class="switch"><input type="checkbox" id="tDesktop" '+(boolPref("Zevio_notif_desktop",false)?"checked":"")+'><span class="switch-track"></span></label></div>' +
             '<div class="toggle-row"><div class="toggle-copy"><div class="toggle-title">Notification sound</div><div class="toggle-desc">Play a sound for new messages.</div></div>' +
-              '<label class="switch"><input type="checkbox" id="tSound" '+(boolPref("aero_notif_sound",true)?"checked":"")+'><span class="switch-track"></span></label></div>' +
+              '<label class="switch"><input type="checkbox" id="tSound" '+(boolPref("Zevio_notif_sound",true)?"checked":"")+'><span class="switch-track"></span></label></div>' +
           '</div>' +
 
           '<div class="settings-section"><h3>Appearance</h3>' +
@@ -1387,7 +1387,7 @@
               return '<button type="button" class="seg-btn '+(mode===m[0]?"active":"")+'" data-mode="'+m[0]+'">'+m[1]+'</button>';
             }).join("") + '</div></div>' +
 
-          '<div class="settings-section"><h3>Chat appearance</h3><div class="settings-sub">Changes the current conversation only. Your Aero interface stays unchanged.</div>' +
+          '<div class="settings-section"><h3>Chat appearance</h3><div class="settings-sub">Changes the current conversation only. Your Zevio interface stays unchanged.</div>' +
             '<div class="theme-grid">' + themeCards(SOLID_THEMES, theme) + '</div></div>' +
 
           '<div class="settings-section"><h3>Anime scenes</h3>' +
@@ -1452,16 +1452,16 @@
       document.getElementById("sBio").addEventListener("change", function(){saveProfile({bio:this.value.trim().slice(0,80)},null);});
       document.getElementById("tActivity").addEventListener("change", function(){ saveProfile({ showActivity: this.checked }, null); });
       document.getElementById("tReceipts").addEventListener("change", function(){ saveProfile({ readReceipts: this.checked }, null); });
-      document.getElementById("tSound").addEventListener("change", function(){ setBoolPref("aero_notif_sound", this.checked); });
+      document.getElementById("tSound").addEventListener("change", function(){ setBoolPref("Zevio_notif_sound", this.checked); });
       document.getElementById("tDesktop").addEventListener("change", function(){
         var box = this;
         if (box.checked && window.Notification && Notification.permission !== "granted") {
           Notification.requestPermission().then(function(perm){
-            setBoolPref("aero_notif_desktop", perm==="granted");
+            setBoolPref("Zevio_notif_desktop", perm==="granted");
             box.checked = perm==="granted";
           });
         } else {
-          setBoolPref("aero_notif_desktop", box.checked);
+          setBoolPref("Zevio_notif_desktop", box.checked);
         }
       });
     }
