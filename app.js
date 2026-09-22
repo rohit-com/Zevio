@@ -13,7 +13,7 @@
   };
   var APP_NAME = "Zevio";
   // New accounts use a real email address so Firebase password recovery works.
-  // USER_DOMAIN is kept only for legacy accounts created by older Zevio builds.
+  // USER_DOMAIN is kept only for legacy accounts created by older Aero builds.
   var USER_DOMAIN = "jarvisid.app";
   var PHONE_DOMAIN = "jarvisphone.app";
   // ==========================================
@@ -71,25 +71,17 @@
   function appLogoSVG(size, gid){
     gid = gid || ("lg" + Math.random().toString(36).slice(2));
     return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="1" y2="1">' +
-        '<stop offset="0" class="lg-a"/><stop offset="1" class="lg-b"/>' +
-      '</linearGradient><style>.lg-a{stop-color:var(--accent)}.lg-b{stop-color:var(--accent2)}</style></defs>' +
-      '<rect x="6" y="6" width="88" height="76" rx="26" fill="url(#'+gid+')"/>' +
-      '<path d="M22 78 Q10 90 4 94 Q12 76 20 70 Z" fill="url(#'+gid+')"/>' +
-      '<path d="M30 46 L76 28 L54 78 L45 57 Z" fill="#fff"/>' +
-      '<path d="M45 57 L54 78 L61 51 L45 57 Z" fill="#fff" opacity="0.55"/>' +
+      '<defs><linearGradient id="'+gid+'" x1="10" y1="10" x2="90" y2="92" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0" class="lg-a"/><stop offset="0.55" class="lg-b"/><stop offset="1" class="lg-c"/>' +
+      '</linearGradient><style>.lg-a{stop-color:#8B5CF6}.lg-b{stop-color:#5B5FF2}.lg-c{stop-color:#2F80ED}</style></defs>' +
+      '<rect x="7" y="7" width="86" height="76" rx="27" fill="url(#'+gid+')"/>' +
+      '<path d="M25 77c-2 7-8 13-16 17 10 0 19-4 25-11" fill="url(#'+gid+')"/>' +
+      '<path d="M26 31h48L61 68H45L53 53H37L26 31Z" fill="#fff" opacity=".98"/>' +
+      '<path d="M37 53h16l8-14H45l-8 14Z" fill="#DDE4FF" opacity=".92"/>' +
     '</svg>';
   }
   (function setFavicon(){
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
-      '<defs><linearGradient id="fi" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/>' +
-      '</linearGradient></defs>' +
-      '<rect x="6" y="6" width="88" height="76" rx="26" fill="url(#fi)"/>' +
-      '<path d="M22 78 Q10 90 4 94 Q12 76 20 70 Z" fill="url(#fi)"/>' +
-      '<path d="M30 46 L76 28 L54 78 L45 57 Z" fill="#fff"/>' +
-      '<path d="M45 57 L54 78 L61 51 L45 57 Z" fill="#fff" opacity="0.55"/>' +
-      '</svg>';
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="fi" x1="10" y1="10" x2="90" y2="92" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8B5CF6"/><stop offset="0.55" stop-color="#5B5FF2"/><stop offset="1" stop-color="#2F80ED"/></linearGradient></defs><rect x="7" y="7" width="86" height="76" rx="27" fill="url(#fi)"/><path d="M25 77c-2 7-8 13-16 17 10 0 19-4 25-11" fill="url(#fi)"/><path d="M26 31h48L61 68H45l8-15H37L26 31Z" fill="#fff"/><path d="M37 53h16l8-14H45l-8 14Z" fill="#DDE4FF" opacity=".92"/></svg>';
     var link = document.createElement("link");
     link.rel = "icon"; link.type = "image/svg+xml";
     link.href = "data:image/svg+xml," + encodeURIComponent(svg);
@@ -123,8 +115,8 @@
   function applyTheme(t){
     if (LEGACY_THEMES[t]) t = LEGACY_THEMES[t];
     if (!THEME_NAMES[t]) t = "lilac";
-    safeSet("Zevio_chat_theme", t);
-    safeSet("Zevio_theme", t); // legacy key retained for upgrades; no longer controls the whole app.
+    safeSet("aero_chat_theme", t);
+    safeSet("aero_theme", t); // legacy key retained for upgrades; no longer controls the whole app.
     var msgs = document.getElementById("msgsEl");
     if (!msgs) return;
     msgs.setAttribute("data-chat-theme", t);
@@ -142,13 +134,13 @@
     });
     document.body.removeChild(probe);
   }
-  function currentTheme(){ return safeGet("Zevio_chat_theme") || safeGet("Zevio_theme") || "lilac"; }
+  function currentTheme(){ return safeGet("aero_chat_theme") || safeGet("aero_theme") || "lilac"; }
   // mode: "auto" follows the OS, "light" / "dark" force it
   function applyMode(m){
     if (m !== "light" && m !== "dark") m = "auto";
     if (m === "auto") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", m);
-    safeSet("Zevio_mode", m);
+    safeSet("aero_mode", m);
   }
   function themeCards(list, current){
     return list.map(function(t){
@@ -157,7 +149,7 @@
         '<div class="theme-name">'+esc(t.name)+'</div></button>';
     }).join("");
   }
-  applyMode(safeGet("Zevio_mode") || "auto");
+  applyMode(safeGet("aero_mode") || "dark");
   function chatIdFor(a,b){ return [a,b].sort().join("__"); }
   // { [uid]: value } - used to build REAL nested objects for Firestore set(..., {merge:true}).
   // (Dotted keys like "unread.uid" only work in update(); in set() they become literal field names.)
@@ -297,7 +289,7 @@
     var el = document.createElement("div");
     el.className = "toast";
     el.innerHTML = avatarHTML(profile, "small") +
-      '<div style="min-width:0"><div class="toast-title">@'+esc(profile.username||"user")+'</div>' +
+      '<div style="min-width:0"><div class="toast-title">'+esc(displayName(profile))+'</div>' +
       '<div class="toast-body">'+esc(truncate(text,44))+'</div></div>';
     el.addEventListener("click", function(){ el.remove(); if (onClick) onClick(); });
     stack.appendChild(el);
@@ -768,8 +760,8 @@
   function renderApp(){
     teardown();   // remove listeners from any previous render (sign out / re-boot)
 
-    var EMPTY_MAIN = '<div class="empty-state"><div class="es-title">Pick a chat</div>' +
-      '<div>Search any username above to start a new conversation.</div></div>';
+    var EMPTY_MAIN = '<div class="empty-state"><div class="empty-logo">'+appLogoSVG(76,"lgEmpty")+'</div><div class="es-kicker">Private conversations, beautifully simple</div><div class="es-title">Start a conversation</div>' +
+      '<div>Search for someone by username, choose a chat, and start talking.</div></div>';
 
     root.innerHTML =
       '<div id="appView">' +
@@ -794,6 +786,7 @@
     drawMeAvatar();
     showEmailVerificationBanner();
     document.getElementById("settingsBtn").addEventListener("click", openSettings);
+    if (window.ZevioGroups && window.ZevioGroups.mount) window.ZevioGroups.mount();
 
     var activeOther = null;
     var activeTab = "chats";
@@ -874,13 +867,13 @@
       getProfile(otherUid).then(function(p){
         var text = c.lastMessage || "New message";
         showToast(p, text, function(){ openChat(otherUid); });
-        if (boolPref("Zevio_notif_desktop", false) && window.Notification && Notification.permission==="granted") {
+        if (boolPref("aero_notif_desktop", false) && window.Notification && Notification.permission==="granted") {
           try {
             var n = new Notification(displayName(p), { body: text });
             n.onclick = function(){ window.focus(); openChat(otherUid); n.close(); };
           } catch(e){}
         }
-        if (boolPref("Zevio_notif_sound", true)) playPing();
+        if (boolPref("aero_notif_sound", true)) playPing();
       });
     }
     function updateTitleBadge(){
@@ -935,7 +928,7 @@
         searchResults.forEach(function(p){
           html += '<button class="item" data-uid="'+esc(p.uid)+'">' +
             avatarHTML(p, "", true, canSeeActivity(p) && isOnline(p)) +
-            '<div style="min-width:0;flex:1"><div class="item-name">@'+esc(p.username)+'</div>' +
+            '<div style="min-width:0;flex:1"><div class="item-name">'+esc(displayName(p))+'</div>' +
             '<div class="item-sub">'+(canSeeActivity(p) && isOnline(p) ? "Online" : "Tap to chat")+'</div></div></button>';
         });
         el.innerHTML = html;
@@ -962,7 +955,7 @@
           var sub = typing ? '<i>typing…</i>' : (iRequested ? "Request sent" : esc(truncate(c.lastMessage||"",30)));
           html += '<button class="item'+(other===activeOther?" active":"")+'" data-uid="'+esc(other)+'">' +
             avatarHTML(p, "", true, canSeeActivity(p) && isOnline(p)) +
-            '<div style="min-width:0;flex:1"><div class="item-name">@'+esc(p.username||"user")+'</div>' +
+            '<div style="min-width:0;flex:1"><div class="item-name">'+esc(displayName(p))+'</div>' +
             '<div class="item-sub">'+sub+'</div></div>' +
             (activeTab==="requests" ? '<span class="item-badge-req">New</span>' : (unread>0 ? '<span class="unread-count">'+(unread>9?"9+":unread)+'</span>' : '')) +
             '</button>';
@@ -992,7 +985,7 @@
           '<div class="thread-head">' +
             '<button class="back-btn" id="backBtn" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>' +
             '<div id="threadAvatar">'+avatarHTML(other)+'</div>' +
-            '<div style="min-width:0" id="threadNameWrap"><div class="thread-name" id="threadName">@'+esc(other.username||"user")+'</div>' +
+            '<div style="min-width:0" id="threadNameWrap"><div class="thread-name" id="threadName">'+esc(displayName(other))+'</div>' +
             '<div class="thread-sub" id="threadSub"></div></div>' +
             '<div class="thread-menu-wrap">' +
               '<button class="icon-sq" id="threadMenuBtn" aria-label="More"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>' +
@@ -1228,7 +1221,7 @@
           var pendingIncoming = currentChatData.status==="pending" && currentChatData.requestedBy && currentChatData.requestedBy!==me.uid;
           if (!pendingIncoming) { wrap.innerHTML=""; return; }
           wrap.innerHTML =
-            '<div class="req-banner"><p>@'+esc(other.username||"user")+' wants to message you. Accept to chat, or decline to remove this request.</p>' +
+            '<div class="req-banner"><p>'+esc(displayName(other))+' wants to message you. Accept to chat, or decline to remove this request.</p>' +
             '<div class="req-actions"><button class="accept" id="reqAccept">Accept</button><button id="reqDecline">Decline</button></div></div>';
           document.getElementById("reqAccept").addEventListener("click", function(){
             writeChat({ status:"accepted" });
@@ -1337,14 +1330,14 @@
     // ---- settings ----
     function openSettings(){
       var theme = currentTheme();
-      var mode = safeGet("Zevio_mode") || "auto";
+      var mode = safeGet("aero_mode") || "auto";
       var old = document.getElementById("settingsOverlay"); if (old) old.remove();
       var ov = document.createElement("div");
       ov.id = "settingsOverlay"; ov.className = "settings-overlay";
       ov.innerHTML =
         '<div class="settings-modal">' +
           '<div class="settings-head"><div><div class="settings-title">Settings</div>' +
-          '<div class="settings-sub">Only your username and picture are visible to others.</div></div>' +
+          '<div class="settings-sub">Manage your profile, appearance and privacy preferences.</div></div>' +
           '<button class="settings-close" id="sClose">✕</button></div>' +
 
           '<div class="settings-section"><h3>Profile</h3>' +
@@ -1377,9 +1370,9 @@
 
           '<div class="settings-section"><h3>Notifications</h3>' +
             '<div class="toggle-row"><div class="toggle-copy"><div class="toggle-title">Desktop notifications</div><div class="toggle-desc">Get a system notification for new messages.</div></div>' +
-              '<label class="switch"><input type="checkbox" id="tDesktop" '+(boolPref("Zevio_notif_desktop",false)?"checked":"")+'><span class="switch-track"></span></label></div>' +
+              '<label class="switch"><input type="checkbox" id="tDesktop" '+(boolPref("aero_notif_desktop",false)?"checked":"")+'><span class="switch-track"></span></label></div>' +
             '<div class="toggle-row"><div class="toggle-copy"><div class="toggle-title">Notification sound</div><div class="toggle-desc">Play a sound for new messages.</div></div>' +
-              '<label class="switch"><input type="checkbox" id="tSound" '+(boolPref("Zevio_notif_sound",true)?"checked":"")+'><span class="switch-track"></span></label></div>' +
+              '<label class="switch"><input type="checkbox" id="tSound" '+(boolPref("aero_notif_sound",true)?"checked":"")+'><span class="switch-track"></span></label></div>' +
           '</div>' +
 
           '<div class="settings-section"><h3>Appearance</h3>' +
@@ -1387,7 +1380,7 @@
               return '<button type="button" class="seg-btn '+(mode===m[0]?"active":"")+'" data-mode="'+m[0]+'">'+m[1]+'</button>';
             }).join("") + '</div></div>' +
 
-          '<div class="settings-section"><h3>Chat appearance</h3><div class="settings-sub">Changes the current conversation only. Your Zevio interface stays unchanged.</div>' +
+          '<div class="settings-section"><h3>Chat appearance</h3><div class="settings-sub">Changes the current conversation only. The conversation theme stays independent from the main app appearance.</div>' +
             '<div class="theme-grid">' + themeCards(SOLID_THEMES, theme) + '</div></div>' +
 
           '<div class="settings-section"><h3>Anime scenes</h3>' +
@@ -1452,16 +1445,16 @@
       document.getElementById("sBio").addEventListener("change", function(){saveProfile({bio:this.value.trim().slice(0,80)},null);});
       document.getElementById("tActivity").addEventListener("change", function(){ saveProfile({ showActivity: this.checked }, null); });
       document.getElementById("tReceipts").addEventListener("change", function(){ saveProfile({ readReceipts: this.checked }, null); });
-      document.getElementById("tSound").addEventListener("change", function(){ setBoolPref("Zevio_notif_sound", this.checked); });
+      document.getElementById("tSound").addEventListener("change", function(){ setBoolPref("aero_notif_sound", this.checked); });
       document.getElementById("tDesktop").addEventListener("change", function(){
         var box = this;
         if (box.checked && window.Notification && Notification.permission !== "granted") {
           Notification.requestPermission().then(function(perm){
-            setBoolPref("Zevio_notif_desktop", perm==="granted");
+            setBoolPref("aero_notif_desktop", perm==="granted");
             box.checked = perm==="granted";
           });
         } else {
-          setBoolPref("Zevio_notif_desktop", box.checked);
+          setBoolPref("aero_notif_desktop", box.checked);
         }
       });
     }
