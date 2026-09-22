@@ -1517,7 +1517,7 @@
       renderAuth();
       return;
     }
-    root.innerHTML = '<div class="auth-wrap"><div class="auth-layout" style="grid-template-columns:1fr;max-width:620px;min-height:auto"><section class="auth-side"><div class="auth-card"><div class="auth-eyebrow">Aero</div><h1>Loading your space…</h1><p class="lead">Connecting securely to your account.</p></div></section></div></div>';
+    root.innerHTML = '<div class="auth-wrap"><div class="auth-layout" style="grid-template-columns:1fr;max-width:620px;min-height:auto"><section class="auth-side"><div class="auth-card"><div class="auth-eyebrow">Zevio</div><h1>Loading your space…</h1><p class="lead">Connecting securely to your account.</p></div></section></div></div>';
     db.collection("users").doc(user.uid).get().then(function(doc){
       var data = doc.exists ? doc.data() : null;
       if (!data || !data.username) { renderUsernameSetup(user); return; }
