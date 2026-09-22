@@ -788,7 +788,7 @@
           '</div>' +
           '<div class="list" id="listEl"></div>' +
         '</div>' +
-        '<div class="main" id="mainEl">' +   EMPTY_MAIN +   '<div class="copyright-footer">© 2026 Zevio</div>' + '</div>' +
+        '<div class="main" id="mainEl">' + EMPTY_MAIN + '</div>' +
       '</div>';
 
     drawMeAvatar();
