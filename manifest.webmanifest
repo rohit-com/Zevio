@@ -1,0 +1,12 @@
+{
+  "name": "Zevio",
+  "short_name": "Zevio",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#F8F6FF",
+  "theme_color": "#7C3AED",
+  "description": "Private real-time messaging with voice notes, groups and media.",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
